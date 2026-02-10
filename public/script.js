@@ -1,0 +1,1 @@
+$path:smiths-lawn-care/public/script.js
