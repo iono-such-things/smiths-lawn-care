@@ -32,6 +32,11 @@ jobs:
               echo "Pulling latest changes..."
               cd $APP_DIR
               git pull origin main
+            elif [ -d "$APP_DIR" ]; then
+              echo "Directory exists but not a git repo. Backing up and cloning fresh..."
+              sudo mv $APP_DIR ${APP_DIR}.backup.$(date +%s)
+              git clone $REPO_URL $APP_DIR
+              cd $APP_DIR
             else
               echo "Initial clone..."
               git clone $REPO_URL $APP_DIR
