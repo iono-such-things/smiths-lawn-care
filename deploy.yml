@@ -23,8 +23,8 @@ jobs:
           script: |
             set -e
 
-            APP_DIR="/var/www/hvac-ai-secretary"
-            REPO_URL="https://github.com/dutchiono/hvac-ai-secretary.git"
+            APP_DIR="/var/www/lawn"
+            REPO_URL="https://github.com/dutchiono/smiths-lawn-care.git"
 
             echo "Starting deployment..."
 
@@ -41,13 +41,8 @@ jobs:
             echo "Installing dependencies..."
             npm install --omit=dev
 
-            echo "Creating .env file with secrets..."
-            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
-            echo "PORT=3145" >> .env
-            echo "NODE_ENV=production" >> .env
-
             echo "Restarting service..."
-            sudo systemctl restart hvac-ai-secretary
+            sudo systemctl restart lawn-service
 
             echo "Deployment complete!"
-            sudo systemctl status hvac-ai-secretary --no-pager
+            sudo systemctl status lawn-service --no-pager
