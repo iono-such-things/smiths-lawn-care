@@ -3,216 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M. Jacob Company - Local Family-Owned Heating & Air Conditioning</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="BookingModal.css">
+    <title>Smith's Lawn Care AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #4CBB17 0%, #3A8F12 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-container {
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #4CBB17 0%, #3A8F12 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chat-header p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f9fafb;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 8px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #1f2937;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #4CBB17 0%, #3A8F12 100%);
+            color: white;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #9ca3af;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #4CBB17 0%, #3A8F12 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+
+        .send-button:active {
+            transform: scale(0.95);
+        }
+
+        .send-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-action:hover {
+            background: #e5e7eb;
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">
-                <h1>M. Jacob Company</h1>
-                <p class="tagline">Local, family-owned, heating and air conditioning business</p>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <a href="tel:412-512-0425" class="emergency-btn">Call: 412-512-0425</a>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h2>Professional Heating & Air Conditioning</h2>
-                <p>Local, family-owned business providing reliable HVAC solutions for your home</p>
-                <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="openChat('I need to schedule service')">Schedule Service</button>
-                    <button class="btn btn-secondary" onclick="window.location.href='tel:412-512-0425'">Call for Free Quote</button>
-                </div>
-                <div class="trust-badges">
-                    <div class="badge">
-                        <span class="badge-icon">✓</span>
-                        <span>Licensed & Insured</span>
-                    </div>
-                    <div class="badge">
-                        <span class="badge-icon">⏰</span>
-                        <span>24/7 Emergency</span>
-                    </div>
-                    <div class="badge">
-                        <span class="badge-icon">⭐</span>
-                        <span>5-Star Service</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="services">
-        <div class="container">
-            <h2 class="section-title">Our Services</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">🔥</div>
-                    <h3>Heater Repair</h3>
-                    <p>Professional heater repair services to keep your home warm and comfortable during the colder months.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🛠️</div>
-                    <h3>System Installation</h3>
-                    <p>Expert installation of new heating and cooling systems with guaranteed quality workmanship.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">❄️</div>
-                    <h3>AC Maintenance</h3>
-                    <p>Regular maintenance to ensure your air conditioning runs efficiently all summer long.</p>
-                </div>
-                <div class="service-card">
-                    <div class="service-icon">🔧</div>
-                    <h3>Emergency Service</h3>
-                    <p>24/7 emergency HVAC repair services available when you need us most.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <h2 class="section-title">About Us</h2>
-            <div class="about-content">
-                <p class="about-text">M. Jacob Company is your trusted local HVAC service provider. As a family-owned business, we understand the importance of a comfortable home environment. With years of experience in heating and air conditioning services, we're committed to providing reliable, professional service at fair prices.</p>
-                <div class="features">
-                    <div class="feature">
-                        <span class="feature-icon">✓</span>
-                        <span>Licensed & Insured Professionals</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">✓</span>
-                        <span>Upfront, Honest Pricing</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">✓</span>
-                        <span>Same-Day Emergency Service</span>
-                    </div>
-                    <div class="feature">
-                        <span class="feature-icon">✓</span>
-                        <span>100% Satisfaction Guaranteed</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing">
-        <div class="container">
-            <h2 class="section-title">Transparent Pricing</h2>
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <h3>Diagnostic Fee</h3>
-                    <div class="price">$79</div>
-                    <ul class="pricing-features">
-                        <li>Complete system inspection</li>
-                        <li>Problem diagnosis</li>
-                        <li>Written estimate</li>
-                        <li>Waived with repair</li>
-                    </ul>
-                </div>
-                <div class="pricing-card featured">
-                    <h3>Annual Maintenance</h3>
-                    <div class="price">$149</div>
-                    <ul class="pricing-features">
-                        <li>Comprehensive system check</li>
-                        <li>Cleaning & tune-up</li>
-                        <li>Priority scheduling</li>
-                        <li>10% off repairs</li>
-                    </ul>
-                </div>
-                <div class="pricing-card">
-                    <h3>Emergency Service</h3>
-                    <div class="price">$129</div>
-                    <ul class="pricing-features">
-                        <li>24/7 availability</li>
-                        <li>Same-day service</li>
-                        <li>No overtime charges</li>
-                        <li>Fast response time</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2 class="section-title">Contact Us</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Get in Touch</h3>
-                    <p>Call us today for all your heating and cooling needs!</p>
-                    <div class="contact-details">
-                        <div class="contact-item">
-                            <span class="contact-icon">📞</span>
-                            <a href="tel:412-512-0425">412-512-0425</a>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">📧</span>
-                            <span>info@mjacobcompany.com</span>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">📍</span>
-                            <span>Serving the Greater Pittsburgh Area</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AI Chat Widget -->
-    <div id="chat-widget" class="chat-widget">
+    <div class="chat-container">
         <div class="chat-header">
-            <h3>Chat with Us</h3>
-            <button class="close-chat" onclick="closeChat()">×</button>
+            <div class="status-dot"></div>
+            <div>
+                <h2>Smith's Lawn Care AI Assistant</h2>
+                <p>24/7 Support • Always here to help</p>
+            </div>
         </div>
-        <div id="chat-messages" class="chat-messages"></div>
-        <div class="chat-input-container">
-            <input type="text" id="chat-input" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
-            <button onclick="sendMessage()">Send</button>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    👋 Hi! I'm your Smith's Lawn Care AI assistant. I can help you with:
+                    <br><br>
+                    • Schedule appointments<br>
+                    • Emergency service<br>
+                    • Pricing information<br>
+                    • Service history
+                    <br><br>
+                    How can I help you today?
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="quick-actions" id="quickActions">
+                <div class="quick-action" onclick="sendQuickMessage('Schedule appointment')">📅 Schedule</div>
+                <div class="quick-action" onclick="sendQuickMessage('Emergency service')">🚨 Emergency</div>
+                <div class="quick-action" onclick="sendQuickMessage('Pricing')">💰 Pricing</div>
+            </div>
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+                <button class="send-button" onclick="sendMessage()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Chat Bubble -->
-    <div class="chat-bubble" onclick="openChat()">
-        <span class="chat-icon">💬</span>
-    </div>
+    <script>
+        const API_URL = '/api';
+        let sessionId = null;
 
-    <!-- Booking Modal Container -->
-    <div id="booking-modal-root"></div>
+        // Enter key to send
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
 
-    <!-- React and ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- React Calendar -->
-    <script src="https://cdn.jsdelivr.net/npm/react-calendar@4.8.0/dist/umd/Calendar.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/react-calendar@4.8.0/dist/Calendar.min.css">
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
 
-    <!-- Babel Standalone for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
 
-    <!-- BookingModal Component -->
-    <script type="text/babel" src="BookingModal.jsx"></script>
+            // Show typing indicator
+            showTyping();
 
-    <!-- Main Script -->
-    <script src="script.js"></script>
+            try {
+                // Start session if needed
+                if (!sessionId) {
+                    await startSession();
+                }
+
+                // Send message to API
+                const response = await fetch(`${API_URL}/chat/message`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        message: message,
+                        sender: 'user'
+                    })
+                });
+
+                const data = await response.json();
+                
+                removeTyping();
+                
+                if (data.success) {
+                    addMessage(data.response, 'bot');
+                } else {
+                    addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                removeTyping();
+                addMessage('Sorry, I\'m having trouble connecting. Please try again later.', 'bot');
+            }
+        }
+
+        async function startSession() {
+            try {
+                const response = await fetch(`${API_URL}/chat/start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerName: 'Guest User',
+                        customerPhone: '',
+                        customerEmail: ''
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    sessionId = data.sessionId;
+                }
+            } catch (error) {
+                console.error('Session start error:', error);
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(messageDiv);
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTyping() {
+            const messagesDiv = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            
+            const indicatorDiv = document.createElement('div');
+            indicatorDiv.className = 'typing-indicator';
+            indicatorDiv.innerHTML = '<span></span><span></span><span></span>';
+            
+            typingDiv.appendChild(indicatorDiv);
+            messagesDiv.appendChild(typingDiv);
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function removeTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+    </script>
 </body>
 </html>
